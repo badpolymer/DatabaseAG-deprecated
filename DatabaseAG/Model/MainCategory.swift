@@ -6,19 +6,15 @@
 //
 
 import Foundation
-import SwiftUI
+import RealmSwift
 
-class MainCategory :Identifiable, ObservableObject {
-    let id = UUID()
-    dynamic var name: String = ""
-    var image: Image
-    var subCategories : [SubCategory]?
+class MainCategory :Object, Identifiable{
+    @Persisted var id = UUID()
+    @Persisted var name: String = "Not Delfined"
+    @Persisted var image: String = "questionmark.square.dashed"
+    @Persisted var subCategories: List<SubCategory>
     
-    init(name: String, image:Image, subCategories : [SubCategory]? ) {
-        self.name = name
-        self.image = image
-        self.subCategories = subCategories
-    }
+    @Persisted(originProperty: "mainCategories") var root: LinkingObjects<RootCategory>
 }
 
 

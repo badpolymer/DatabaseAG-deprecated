@@ -6,25 +6,14 @@
 //
 
 import Foundation
+import RealmSwift
 
-class SubCategory : Identifiable {
-    let id = UUID()
-    var name : String
-//    var mainCategory : MainCategory
-    var items : Array<MainItem>?
+class SubCategory : Object, Identifiable {
+    @Persisted var id = ObjectId()
+    @Persisted var name : String = "Not defined subCat"
+    @Persisted(originProperty: "subCategories") var mainCategory: LinkingObjects<MainCategory>
+    @Persisted var items : List<MainItem>
     
-    init(name: String) {
-        self.name = name
-    }
 }
 
 
-
-var subcat_Bolt = SubCategory(name: "Bolt")
-var subcat_Nut = SubCategory(name: "Nut")
-var subcat_FRC = SubCategory(name: "Front Release Connector")
-
-
-protocol Family {
-    var familyPN : String { get set }
-}

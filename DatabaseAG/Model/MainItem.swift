@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import RealmSwift
 
-class MainItem {
+class MainItem : Object {
     var familyPN: String {
         var prefix : String {return (self.prefixes.isEmpty ? "" : "()") + (self.prefixPN ?? "")}
         var midfix : String {return self.midfixes.isEmpty ? "" : "()"}
@@ -32,7 +33,7 @@ class MainItem {
     var itemName : String
     
     
-    
+    @Persisted(originProperty: "items") var category : LinkingObjects<SubCategory>
 }
 
 

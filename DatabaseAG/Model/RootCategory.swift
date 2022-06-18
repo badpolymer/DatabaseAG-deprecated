@@ -11,6 +11,6 @@ import RealmSwift
 class RootCategory : Object {
     @Persisted(primaryKey: true) var _id: ObjectId
     @Persisted var name: String?
-    
+    @Persisted var mainCategories: List<MainCategory>
 }
 
