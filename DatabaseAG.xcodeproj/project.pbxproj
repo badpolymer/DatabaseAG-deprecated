@@ -81,6 +81,7 @@
 			isa = PBXGroup;
 			children = (
 				4835A52928392240003DC537 /* DatabaseAGApp.swift */,
+				484F32B3285DCDBF00FEBCE6 /* Controller */,
 				4835A55028394EFD003DC537 /* Model */,
 				4835A54928394E53003DC537 /* Views */,
 				4835A52D28392243003DC537 /* Assets.xcassets */,
@@ -101,7 +102,6 @@
 		4835A54928394E53003DC537 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				4835A55B283A4993003DC537 /* MainController.swift */,
 				4835A52B28392240003DC537 /* ContentView.swift */,
 				4835A559283A1512003DC537 /* RootRow.swift */,
 				4835A54A28394E8A003DC537 /* MainCatList.swift */,
@@ -123,6 +123,14 @@
 				48A752412840AAEA00E7AC84 /* MainItem.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		484F32B3285DCDBF00FEBCE6 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				4835A55B283A4993003DC537 /* MainController.swift */,
+			);
+			path = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
