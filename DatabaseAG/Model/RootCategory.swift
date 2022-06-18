@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import RealmSwift
 
-class RootCategory {
-    static var items : [MainCategory] = []
+class RootCategory : Object {
+    @Persisted(primaryKey: true) var _id: ObjectId
+    @Persisted var name: String?
     
 }
 
