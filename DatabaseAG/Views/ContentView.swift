@@ -3,7 +3,10 @@
 //  DatabaseAG
 //
 //  Created by Frederick Tang on 5/21/22.
-//
+//IMPORTANT//AVGear===================
+//https://stackoverflow.com/questions/50459785/how-to-set-realm-file-on-realm
+//==========================
+
 
 import SwiftUI
 
@@ -15,35 +18,44 @@ struct ContentView: View {
     
     var body: some View {
         
-            HStack(spacing: 10.0) {
+        VStack(alignment: .leading) {
+            Spacer()
+                .frame(height: 10)
+            HStack(alignment: .center) {
+                Spacer()
+                    .frame(width:5)
+                Button("Load Database"){controller.loadRealm()}
+                Spacer()
+                    .frame(width:5)
+                Text(controller.filePath ?? "Not Loaded")
+                Spacer()
+            }.frame(width:1000)
+            Spacer()
+                .frame(height: 10)
+            HStack(spacing: 5.0) {
+                Spacer()
+                    .frame(width:0)
                 VStack(spacing: 0.0) {
-                    Spacer()
-                        .frame(height: 20)
                     MainCatList()
                         .frame(width: 150)
-                    Spacer()
-                        .frame(height: 20)
                 }
                 if controller.rootManagerIsSelected {
                     
                 } else {
                     VStack {
-                        Spacer()
-                            .frame(height: 20)
                         SubCatList()
                             .frame(width: 200)
-                        
-                        
-                        Spacer()
-                            .frame(height: 20)
                     }
                 }
                 
             }
-            
+            Spacer()
+                .frame(height: 20)
         }
-    
+        
     }
+    
+}
 
 
 
@@ -56,11 +68,11 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-
-var main_Tool = MainCategory(name: "Tool", image: Image(systemName: "hammer.fill"), subCategories: nil)
-var main_Accessory = MainCategory(name: "Accessory", image: Image(systemName: "gearshape.2.fill"),subCategories: [subcat_Bolt,subcat_Nut])
-var main_Connector = MainCategory(name: "Connector", image: Image(systemName: "cable.connector.horizontal"), subCategories: [subcat_FRC])
-var main_Contact = MainCategory(name: "Contact", image: Image(systemName: "pencil"), subCategories: nil)
-var main_Terminal = MainCategory(name: "Terminal", image: Image(systemName: "memorychip"), subCategories: nil)
-var main_Wire = MainCategory(name: "Cable/Wire", image: Image(systemName: "scribble"), subCategories: nil)
-var main_Splice = MainCategory(name: "Splice", image: Image(systemName: "cylinder.fill"), subCategories: nil)
+//
+//var main_Tool = MainCategory(name: "Tool", image: Image(systemName: "hammer.fill"), subCategories: nil)
+//var main_Accessory = MainCategory(name: "Accessory", image: Image(systemName: "gearshape.2.fill"),subCategories: [subcat_Bolt,subcat_Nut])
+//var main_Connector = MainCategory(name: "Connector", image: Image(systemName: "cable.connector.horizontal"), subCategories: [subcat_FRC])
+//var main_Contact = MainCategory(name: "Contact", image: Image(systemName: "pencil"), subCategories: nil)
+//var main_Terminal = MainCategory(name: "Terminal", image: Image(systemName: "memorychip"), subCategories: nil)
+//var main_Wire = MainCategory(name: "Cable/Wire", image: Image(systemName: "scribble"), subCategories: nil)
+//var main_Splice = MainCategory(name: "Splice", image: Image(systemName: "cylinder.fill"), subCategories: nil)
