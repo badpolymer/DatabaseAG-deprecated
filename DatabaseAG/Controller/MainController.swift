@@ -10,7 +10,7 @@ import RealmSwift
 
 class MainController : ObservableObject {
     var myrealm: Realm?
-    
+    @Published var filePath : String?
     lazy var rootItems = myrealm?.objects(MainCategory.self)
     var rootManagerIsSelected : Bool = false {
         didSet {
@@ -26,7 +26,7 @@ class MainController : ObservableObject {
     
     func loadRealm() {
         var config = Realm.Configuration.defaultConfiguration
-        
+        print(config.fileURL ?? "Default Nothing")
         let dialog = NSOpenPanel()
         
         dialog.title                   = "Choose single directory"
@@ -38,7 +38,12 @@ class MainController : ObservableObject {
         if (dialog.runModal() ==  NSApplication.ModalResponse.OK) {
             if let result = dialog.url {
                 config.fileURL = result
+//                config.fileURL!.deleteLastPathComponent()
+                config.fileURL!.appendPathComponent("default")
+                config.fileURL!.appendPathExtension("realm")
+                print (config.fileURL ?? "Nothing!!!")
                 myrealm = try! Realm(configuration: config)
+                filePath = myrealm!.configuration.fileURL?.absoluteString
             }
         }else{
             return
