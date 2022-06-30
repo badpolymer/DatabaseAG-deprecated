@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ItemRow: View {
-    @StateObject var controller = mainController
+    @EnvironmentObject var controller : MainController
     var itemFamalyPN : String
     var body: some View {
         Text(itemFamalyPN)

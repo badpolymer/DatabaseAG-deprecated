@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct RootRow: View {
+    @EnvironmentObject var mainController : MainController
     var body: some View {
         VStack {
             Spacer()
@@ -22,7 +23,7 @@ struct RootRow: View {
                 .onTapGesture {
                     mainController.selectedMainCat = nil
                     mainController.rootManagerIsSelected = true
-                    print("No Selection")
+                    print("Root Manager")
                 }
             Divider()
                 .frame(height: 1, alignment: .leading)

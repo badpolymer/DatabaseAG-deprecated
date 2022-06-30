@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct MainCatList: View {
-    @StateObject var controller = mainController
+    @EnvironmentObject var mainController : MainController
     var body: some View {
         List() {
             RootRow()
-            ForEach(controller.rootItems){category in
-                MainCatRow(category: category)
-                    
+            if let categories = mainController.mainCategories {
+                ForEach(categories){category in
+                    MainCatRow(category: category)
+                        
+                }
             }
+
         }
         .listStyle(.plain)
     }

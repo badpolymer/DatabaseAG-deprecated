@@ -11,44 +11,64 @@
 import SwiftUI
 
 
-var mainController = MainController()
 
 struct ContentView: View {
-    @StateObject var controller = mainController
+    @EnvironmentObject var mainController : MainController
     
     var body: some View {
         
         VStack(alignment: .leading) {
+            
+            //Top Section
             Spacer()
                 .frame(height: 10)
             HStack(alignment: .center) {
                 Spacer()
                     .frame(width:5)
-                Button("Load Database"){controller.loadRealm()}
+                Button("Load Database"){mainController.loadRealm()}
                 Spacer()
                     .frame(width:5)
-                Text(controller.filePath ?? "Not Loaded")
+                Text(mainController.filePath ?? "Not Loaded")
                 Spacer()
             }.frame(width:1000)
+            
+            
             Spacer()
                 .frame(height: 10)
+            
+            //Main Section
             HStack(spacing: 5.0) {
                 Spacer()
                     .frame(width:0)
+                
+                //Root List
                 VStack(spacing: 0.0) {
                     MainCatList()
                         .frame(width: 150)
                 }
-                if controller.rootManagerIsSelected {
+                
+                //Secondary List
+                if mainController.rootManagerIsSelected {
                     
                 } else {
                     VStack {
                         SubCatList()
                             .frame(width: 200)
+                            
                     }
                 }
                 
+                //Item List
+                
+                //Editers
+                if mainController.rootManagerIsSelected {
+                RootManager()
+                }
+                
             }
+            
+            
+            //Bottom
             Spacer()
                 .frame(height: 20)
         }
@@ -65,6 +85,7 @@ struct ContentView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .preferredColorScheme(.dark)
     }
 }
 

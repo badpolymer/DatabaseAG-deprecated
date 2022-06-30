@@ -9,7 +9,7 @@ import SwiftUI
 
 
 struct SubCatList: View {
-    @StateObject var controller = mainController
+    @EnvironmentObject var controller : MainController
     var body: some View {
         VStack {
             List{

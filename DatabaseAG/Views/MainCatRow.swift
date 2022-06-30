@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
+import RealmSwift
 
 struct MainCatRow: View {
+    @EnvironmentObject var mainController : MainController
     var category : MainCategory
     var body: some View {
         VStack {
             HStack{
-                category.image
-                    .frame(width: 20, height: 20)
+                Image(systemName: category.image)
+                .frame(width: 20, height: 20)
                 
                 Text(category.name)
                 Spacer()
@@ -32,8 +34,8 @@ struct MainCatRow: View {
     }
 }
 
-//struct MainCatRow_Previews: PreviewProvider {
-//    static var previews: some View {
-//        MainCatRow(category: mainController.mainCategories.first!)
-//    }
-//}
+struct MainCatRow_Previews: PreviewProvider {
+    static var previews: some View {
+        MainCatRow(category: MainCategory())
+    }
+}
