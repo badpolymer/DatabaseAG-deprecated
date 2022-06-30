@@ -25,6 +25,7 @@
 		484F32B0285DC21500FEBCE6 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 484F32AF285DC21500FEBCE6 /* Realm */; };
 		484F32B2285DC21500FEBCE6 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 484F32B1285DC21500FEBCE6 /* RealmSwift */; };
 		48A752422840AAEA00E7AC84 /* MainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48A752412840AAEA00E7AC84 /* MainItem.swift */; };
+		48DB3DC3285EE6F600D97941 /* RootManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48DB3DC2285EE6F600D97941 /* RootManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -46,6 +47,7 @@
 		4835A55D283A579D003DC537 /* ItemList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemList.swift; sourceTree = "<group>"; };
 		4835A55F283A57AC003DC537 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
 		48A752412840AAEA00E7AC84 /* MainItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainItem.swift; sourceTree = "<group>"; };
+		48DB3DC2285EE6F600D97941 /* RootManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 				4835A55328395FE8003DC537 /* SubCatRow.swift */,
 				4835A55D283A579D003DC537 /* ItemList.swift */,
 				4835A55F283A57AC003DC537 /* ItemRow.swift */,
+				48DB3DC2285EE6F600D97941 /* RootManager.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -218,6 +221,7 @@
 				4835A558283A1453003DC537 /* RootCategory.swift in Sources */,
 				4835A55E283A579D003DC537 /* ItemList.swift in Sources */,
 				4835A52A28392240003DC537 /* DatabaseAGApp.swift in Sources */,
+				48DB3DC3285EE6F600D97941 /* RootManager.swift in Sources */,
 				4835A55428395FE8003DC537 /* SubCatRow.swift in Sources */,
 				4835A55628396000003DC537 /* SubCategory.swift in Sources */,
 				4835A55228395FCE003DC537 /* SubCatList.swift in Sources */,
