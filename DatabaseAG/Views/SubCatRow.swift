@@ -26,8 +26,8 @@ struct SubCatRow: View {
     }
 }
 
-struct SubCatRow_Previews: PreviewProvider {
-    static var previews: some View {
-        SubCatRow(subCategory: subcat_Bolt)
-    }
-}
+//struct SubCatRow_Previews: PreviewProvider {
+//    static var previews: some View {
+//        SubCatRow(subCategory: subcat_Bolt)
+//    }
+//}
