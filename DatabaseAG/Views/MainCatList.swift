@@ -9,18 +9,24 @@ import SwiftUI
 
 struct MainCatList: View {
     @EnvironmentObject var mainController : MainController
+    @State private var selected : UUID?
     var body: some View {
-        List() {
-            RootRow()
+        VStack{
             if let categories = mainController.mainCategories {
-                ForEach(categories){category in
-                    MainCatRow(category: category)
+                List(categories, selection: $selected) {cat in
+                    
+                    HStack{
+                        Image(systemName: cat.image)
+                        .frame(width: 20, height: 20)
                         
+                        Text(cat.name)
+                        Spacer()
+                    }
+  
                 }
+                .listStyle(.plain)
             }
-
         }
-        .listStyle(.plain)
     }
 }
 
