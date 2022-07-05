@@ -30,6 +30,25 @@ struct ContentView: View {
                     .frame(width:5)
                 Text(mainController.filePath ?? "Not Loaded")
                 Spacer()
+                Button {
+                    mainController.selectedMainCat = nil
+                    mainController.rootManagerIsSelected = true
+                    print("Root Manager")
+                } label: {
+                    Image(systemName: "point.filled.topleft.down.curvedto.point.bottomright.up")
+                    Text("Root Manager")
+                }
+                if mainController.rootManagerIsSelected {
+                Button {
+                    mainController.rootManagerIsSelected = false
+                    print("Exit Root Manager")
+                } label: {
+                    Text("Exit RM")
+                }
+                }
+                Spacer()
+                    .frame(width:5)
+
             }.frame(width:1000)
             
             
@@ -42,9 +61,13 @@ struct ContentView: View {
                     .frame(width:0)
                 
                 //Root List
+                if mainController.rootManagerIsSelected {
+                    
+                } else {
                 VStack(spacing: 0.0) {
                     MainCatList()
                         .frame(width: 150)
+                }
                 }
                 
                 //Secondary List
