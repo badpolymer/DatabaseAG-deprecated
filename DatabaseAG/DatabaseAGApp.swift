@@ -11,7 +11,10 @@ import SwiftUI
 struct DatabaseAGApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView().preferredColorScheme(.light).environmentObject(MainController())
+            ContentView()
+                .preferredColorScheme(.light)
+                .environmentObject(MainController())
+                .frame(minWidth: 1000, minHeight: 500,alignment: .topLeading)
         }
     }
 }
