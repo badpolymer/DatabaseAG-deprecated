@@ -14,7 +14,6 @@ class MainCategory :Object,ObjectKeyIdentifiable,Identifiable{
     @Persisted var image: String = "questionmark.square.dashed"
     @Persisted var subCategories: List<SubCategory>
     
-    @Persisted(originProperty: "mainCategories") var root: LinkingObjects<RootCategory>
     
     convenience init(name: String, image: String) {
         self.init()
