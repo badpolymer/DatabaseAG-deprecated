@@ -17,7 +17,6 @@
 		4835A55228395FCE003DC537 /* SubCatList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55128395FCE003DC537 /* SubCatList.swift */; };
 		4835A55428395FE8003DC537 /* SubCatRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55328395FE8003DC537 /* SubCatRow.swift */; };
 		4835A55628396000003DC537 /* SubCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55528396000003DC537 /* SubCategory.swift */; };
-		4835A558283A1453003DC537 /* RootCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A557283A1453003DC537 /* RootCategory.swift */; };
 		4835A55C283A4993003DC537 /* MainController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55B283A4993003DC537 /* MainController.swift */; };
 		4835A55E283A579D003DC537 /* ItemList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55D283A579D003DC537 /* ItemList.swift */; };
 		4835A560283A57AC003DC537 /* ItemRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55F283A57AC003DC537 /* ItemRow.swift */; };
@@ -40,7 +39,6 @@
 		4835A55128395FCE003DC537 /* SubCatList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCatList.swift; sourceTree = "<group>"; };
 		4835A55328395FE8003DC537 /* SubCatRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCatRow.swift; sourceTree = "<group>"; };
 		4835A55528396000003DC537 /* SubCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCategory.swift; sourceTree = "<group>"; };
-		4835A557283A1453003DC537 /* RootCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootCategory.swift; sourceTree = "<group>"; };
 		4835A55B283A4993003DC537 /* MainController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainController.swift; sourceTree = "<group>"; };
 		4835A55D283A579D003DC537 /* ItemList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemList.swift; sourceTree = "<group>"; };
 		4835A55F283A57AC003DC537 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
@@ -105,13 +103,13 @@
 			children = (
 				4835A52B28392240003DC537 /* ContentView.swift */,
 				4835A54A28394E8A003DC537 /* MainCatList.swift */,
-				4835A54C28394EA3003DC537 /* MainCatRow.swift */,
 				4835A55128395FCE003DC537 /* SubCatList.swift */,
-				4835A55328395FE8003DC537 /* SubCatRow.swift */,
 				4835A55D283A579D003DC537 /* ItemList.swift */,
 				4835A55F283A57AC003DC537 /* ItemRow.swift */,
 				48DB3DC2285EE6F600D97941 /* RootManager.swift */,
 				48F28E17286DFF7C00C63265 /* MainCategoryManager.swift */,
+				4835A54C28394EA3003DC537 /* MainCatRow.swift */,
+				4835A55328395FE8003DC537 /* SubCatRow.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -119,7 +117,6 @@
 		4835A55028394EFD003DC537 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				4835A557283A1453003DC537 /* RootCategory.swift */,
 				4835A54E28394EF3003DC537 /* MainCategory.swift */,
 				4835A55528396000003DC537 /* SubCategory.swift */,
 				48A752412840AAEA00E7AC84 /* MainItem.swift */,
@@ -218,7 +215,6 @@
 				4835A560283A57AC003DC537 /* ItemRow.swift in Sources */,
 				4835A52C28392240003DC537 /* ContentView.swift in Sources */,
 				48A752422840AAEA00E7AC84 /* MainItem.swift in Sources */,
-				4835A558283A1453003DC537 /* RootCategory.swift in Sources */,
 				4835A55E283A579D003DC537 /* ItemList.swift in Sources */,
 				4835A52A28392240003DC537 /* DatabaseAGApp.swift in Sources */,
 				48DB3DC3285EE6F600D97941 /* RootManager.swift in Sources */,
