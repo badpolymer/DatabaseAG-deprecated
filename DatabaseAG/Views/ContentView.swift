@@ -71,18 +71,18 @@ struct ContentView: View {
                 }
                 
                 //Secondary List
-                if mainController.rootManagerIsSelected {
-                    
-                } else {
+                if !mainController.rootManagerIsSelected && mainController.selectedMainCat != nil {
                     VStack {
                         SubCatList()
-                            .frame(width: 200)
+                            .frame(width: (mainController.subCategoryIsEditing ? 500:250))
                             
                     }
                 }
                 
                 //Item List
-                
+                if !mainController.rootManagerIsSelected && !mainController.subCategoryIsEditing {
+                    Text("Item List")
+                }
                 //Editers
                 if mainController.rootManagerIsSelected {
                 RootManager()
