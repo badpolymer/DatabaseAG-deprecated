@@ -25,6 +25,10 @@ struct MainCatList: View {
   
                 }
                 .listStyle(.plain)
+                .onChange(of: selected) { newValue in
+                    mainController.selectedMainCat = mainController.convert(newValue)
+                }
+                .disabled(mainController.subCategoryIsEditing)
             }
         }
     }
