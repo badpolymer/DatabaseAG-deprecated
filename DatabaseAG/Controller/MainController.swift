@@ -23,7 +23,7 @@ class MainController : ObservableObject {
     }
     
     
-    
+    //SubCatlist
     @Published var selectedMainCat: MainCategory?
     @Published var selectedSUbCat: SubCategory?
     @Published var selectedMainItem : MainItem?
@@ -33,6 +33,7 @@ class MainController : ObservableObject {
     // MARK: - Realm DataBase
     func loadRealm() {
         var config = Realm.Configuration.defaultConfiguration
+        config.schemaVersion = 2
         let dialog = NSOpenPanel()
         
         dialog.title                   = "Choose single directory"
@@ -183,11 +184,82 @@ class MainController : ObservableObject {
         alert.runModal()
     }
     
+    func convert(_ id:UUID?) -> MainCategory? {
+        if let id = id, let mainCategories = mainCategories {
+            let result = mainCategories.where{$0.id == id}
+            return result.first
+        } else {
+            return nil
+        }
+            
+    }
     
-
+    func convert(_ id:UUID?) -> SubCategory? {
+        if let id = id, let mainCategories = selectedMainCat {
+            let result = mainCategories.subCategories.where{$0.id == id}
+            return result.first
+        } else {
+            return nil
+        }
+            
+    }
     
+    func add(_ subCategory: String) {
+        if let mainCategory = selectedMainCat {
+            do {
+                try MainController.myrealm?.write({
+                    let newCategory = SubCategory()
+                    newCategory.name = subCategory
+                    mainCategory.subCategories.append(newCategory)
+                })
+            } catch {
+                realmError(error)
+            }
+        }
+    }
     
+    func modify(_ nameOfsubCategory: String) {
+        if let selectedSubCat = selectedSubCat {
+            do {
+                try MainController.myrealm?.write({
+                    selectedSubCat.name = nameOfsubCategory
+                })
+            } catch {
+                realmError(error)
+            }
+        }
+    }
     
+    func delete(_ subCategory: SubCategory) {
+        if let selectedSubCat = selectedSubCat {
+            let itemNumber = selectedSubCat.items.count
+            if itemNumber == 0 {
+                deleteWithAlert(subCategory)
+            } else {
+                categoryEditingError("There is \(itemNumber) item(s) under this category. You can not delete it.")
+            }
+        } else {
+            categoryEditingError("Please select an item to delete.")
+        }
+    }
     
+    func delete(subCate: SubCategory) {
+        if let selectedSubCat = selectedSubCat {
+            let itemNumber = selectedSubCat.items.count
+            if itemNumber == 0 {
+                do {
+                    try MainController.myrealm?.write({
+                        selectedMainCat?.subCategories.removeFirst()
+                    })
+                } catch {
+                    
+                }
+            } else {
+                categoryEditingError("There is \(itemNumber) item(s) under this category. You can not delete it.")
+            }
+        } else {
+            categoryEditingError("Please select an item to delete.")
+        }
+    }
     
 }
