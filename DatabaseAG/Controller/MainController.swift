@@ -108,7 +108,7 @@ class MainController : ObservableObject {
                     }
                 
             } else {
-                mainCatEditingError("\(trimedName) already exists.")
+                categoryEditingError("\(trimedName) already exists.")
             }
         }
         
@@ -135,41 +135,46 @@ class MainController : ObservableObject {
             
             let subItemsNumber = itemToDelete.subCategories.count
             if subItemsNumber == 0 {
-                
-                let alert = NSAlert()
-                alert.messageText = "Deletioin"
-                alert.informativeText = "Note: There is no item under this category. Make sure to remove it?"
-                alert.addButton(withTitle: "Cancel")
-                alert.addButton(withTitle: "Yes")
-                alert.alertStyle = .warning
-                let result = alert.runModal()
-                switch result {
-                case NSApplication.ModalResponse.alertFirstButtonReturn:
-                    print("First (and usually default) button")
-                case NSApplication.ModalResponse.alertSecondButtonReturn:
-                    DispatchQueue.main.async {
-                        do {
-                            try MainController.myrealm?.write{
-                                MainController.myrealm?.delete(itemToDelete)
-                            }
-                        } catch {
-                            self.realmError(error)
-                        }
-                    }
-                default:
-                    print("There is no provision for further buttons")
-                }
-                
+                deleteWithAlert(itemToDelete)
             } else {
-                self.mainCatEditingError("There is still items under this category. You cannot delete it.")
+                self.categoryEditingError("There is still items under this category. You cannot delete it.")
             }
               
         } else {
-            self.mainCatEditingError("Datebase is not loaded or there is no item in root.")
+            self.categoryEditingError("Datebase is not loaded or there is no item in root.")
         }
     }
     
-    func mainCatEditingError(_ text :String){
+    
+    
+    func deleteWithAlert(_ itemToDelete: Object) {
+        let alert = NSAlert()
+        alert.messageText = "Deletion"
+        alert.informativeText = "Note: There is no item under this category. Make sure to remove it?"
+        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: "Yes")
+        alert.alertStyle = .warning
+        let result = alert.runModal()
+        switch result {
+        case NSApplication.ModalResponse.alertFirstButtonReturn:
+            print("First (and usually default) button")
+        case NSApplication.ModalResponse.alertSecondButtonReturn:
+            DispatchQueue.main.async {
+                do {
+                    try MainController.myrealm?.write{
+                        MainController.myrealm?.delete(itemToDelete)
+                    }
+                } catch {
+                    self.realmError(error)
+                }
+            }
+        default:
+            print("There is no provision for further buttons")
+        }
+    }
+     
+// MARK: - Content View Control
+    func categoryEditingError(_ text :String){
         let alert = NSAlert()
         alert.messageText = "Operation Error"
         alert.informativeText = text

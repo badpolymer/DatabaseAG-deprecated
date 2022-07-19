@@ -53,7 +53,7 @@ struct RootManager: View {
                     }
                     
                 }
-                .frame(width:250, height:400)
+                .frame(width:250)
                 .listStyle(.plain)
                 
                 HStack {
@@ -74,7 +74,7 @@ struct RootManager: View {
                             mainCatName = ""
                             mainCatSymbol = ""
                         } else {
-                            mainController.mainCatEditingError("You didn't select an items.")
+                            mainController.categoryEditingError("You didn't select an items.")
                         }
                         
                     } label: {
@@ -97,7 +97,7 @@ struct RootManager: View {
                             mainController.dataChangeIsComplete = false
                             
                         } else {
-                            mainController.mainCatEditingError("You didn't select an items.")
+                            mainController.categoryEditingError("You didn't select an items.")
                         }
                     } label: {
                         Text("Edit")
