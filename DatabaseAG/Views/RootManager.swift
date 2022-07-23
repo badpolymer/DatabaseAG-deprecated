@@ -11,10 +11,9 @@ import RealmSwift
 struct RootManager: View {
     @EnvironmentObject var mainController : MainController
     @State private var selectedMainCat : MainCategory?
-    
+    @State private var title : String = "New Main Category"
     @State private var mainCatName : String = ""
     @State private var mainCatSymbol : String = ""
-    
     @State private var disableMainCatEditing : Bool = true
    
     
@@ -23,38 +22,37 @@ struct RootManager: View {
             
 // MARK: - Left Side
             VStack(alignment: .leading) {
-                
-                List() {
-                    if mainController.mainCategories != nil {
-                        ForEach(mainController.mainCategories!){category in
-                            VStack(alignment: .leading) {
-                                HStack{
-                                    Text(category.name)
-                                    Spacer()
-                                }
-                                .contentShape(Rectangle())
-                                .onTapGesture {
-                                    self.selectedMainCat = category
-                                    self.mainCatName = category.name
-                                    self.mainCatSymbol = category.image
-                                    mainController.dataChangeIsComplete = false
-                                    print(self.selectedMainCat!)
-                                }
-                                
-                                Divider()
-                                    .frame(height: 1)
-                                
-                            }
-                            
+                if let mainCategories = mainController.mainCategories {
+                    List(mainCategories, id:\.self, selection: $selectedMainCat) { category in
+                        HStack{
+                            Image(systemName: category.image)
+                                .frame(width: 20, height: 20)
+                            Text(category.name)
                         }
-                    } else {
-                        Text("Nothing here yet.")
                         
                     }
+                    .frame(width:250)
+                    .onChange(of: selectedMainCat) { newValue in
+                        if let mainCategory = newValue {
+                            title = mainCategory.name
+                            mainCatName = mainCategory.name
+                            mainCatSymbol = mainCategory.image
+                        } else {
+                            title = "New Main Category"
+                            mainCatName =  ""
+                            mainCatSymbol =  ""
+                        }
+                        mainController.operationIsComplete = false
+                    }
+                    .disabled(!disableMainCatEditing)
                     
+                } else {
+                    List(){
+                        Text("Nothing here yet.")
+                    }
+                    .frame(width:250)
+                    .disabled(!disableMainCatEditing)
                 }
-                .frame(width:250)
-                .listStyle(.plain)
                 
                 HStack {
                     
@@ -68,40 +66,41 @@ struct RootManager: View {
                     }
                     Button {
                         //Action for -
-                        if selectedMainCat != nil {
-                            mainController.deleteMainCat(selectedMainCat!)
+                        mainController.operationIsComplete = false
+                        if let categoryToDelete = selectedMainCat {
+                            mainController.delete(categoryToDelete)
                             selectedMainCat = nil
                             mainCatName = ""
                             mainCatSymbol = ""
+                            title = "New Main Category"
                         } else {
-                            mainController.categoryEditingError("You didn't select an items.")
+                            mainController.errorAlert(with: "You didn't select an items.")
                         }
                         
                     } label: {
                         Text("-")
                     }
+                    .disabled(selectedMainCat == nil)
                     Button {
                         //Action for +
                         selectedMainCat = nil
+                        title = "New Main Category"
                         mainCatName = ""
-                        mainCatSymbol = "questionmark.square.dashed"
+                        mainCatSymbol = ""
                         disableMainCatEditing = false
-                        mainController.dataChangeIsComplete = false
+                        mainController.operationIsComplete = false
                     } label: {
                         Text("+")
                     }
                     Button {
                         //Action for Edit
-                        if selectedMainCat != nil {
-                            disableMainCatEditing = false
-                            mainController.dataChangeIsComplete = false
-                            
-                        } else {
-                            mainController.categoryEditingError("You didn't select an items.")
-                        }
+                        disableMainCatEditing = false
+                        mainController.operationIsComplete = false
+
                     } label: {
                         Text("Edit")
                     }
+                    .disabled(selectedMainCat == nil)
                 }
             }
             
@@ -109,9 +108,7 @@ struct RootManager: View {
 // MARK: - Right side
             VStack(alignment: .leading) {
                 
-              
-                
-                Text(selectedMainCat == nil ? "New Main Category" : selectedMainCat!.name)
+                Text(title)
                     .padding([.top, .leading], 5.0)
                 
                 TextField("Enter the name of Main Category", text: $mainCatName)
@@ -133,26 +130,25 @@ struct RootManager: View {
                     }
                     Spacer()
                     Button {
-                        //Action
                         disableMainCatEditing = true
-                        if mainController.realmIsLoaded() {
-                            if selectedMainCat == nil {
-                                mainController.addMainCat(name: mainCatName, symbol: mainCatSymbol)
-                                if mainController.dataChangeIsComplete {
-                                    
-                                } else {
-                                    disableMainCatEditing = false
-                                }
-                            } else {
-                                mainController.updateMainCat(selectedMainCat!,name: mainCatName,symbol: mainCatSymbol)
-                            }
+                    } label: {
+                        Text("Cancel")
+                    }
+                    .disabled(disableMainCatEditing)
+
+                    Button {
+                        //Action for Save
+                        disableMainCatEditing = true
+                        mainController.updateOrAddMainCat(selectedMainCat, newName: mainCatName, newSymbol: mainCatSymbol)
+                        if mainController.operationIsComplete {
+                            
                         } else {
                             disableMainCatEditing = false
-                            mainController.realmError(NSError(domain: "DB Not Loaded", code: 2))
                         }
                         
+                        
                     } label: {
-                        Text(mainController.dataChangeIsComplete ? "Suscceed":"Save")
+                        Text(mainController.operationIsComplete ? "Suscceed":"Save")
                     }
                     .disabled(disableMainCatEditing)
                     
@@ -179,18 +175,5 @@ extension View {
         let roundedRect = RoundedRectangle(cornerRadius: cornerRadius)
         return clipShape(roundedRect)
             .overlay(roundedRect.strokeBorder(content, lineWidth: width))
-    }
-}
-
-
-
-
-struct CategoryEditer_Previews: PreviewProvider {
-    static var previews: some View {
-        RootManager()
-            .preferredColorScheme(.light)
-            .environmentObject(MainController())
-            
-        
     }
 }
