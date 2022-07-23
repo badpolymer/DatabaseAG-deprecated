@@ -27,8 +27,8 @@ class MainController : ObservableObject {
     
     //SubCatlist
     @Published var selectedMainCat: MainCategory?
-    @Published var subCategoryIsEditing = false
-    var currentSubCategories : Results<SubCategory>?
+    @Published var mainCategoryManagerIsEditing = false
+    @Published var shownSubCategories : Results<SubCategory>?
     
     @Published var selectedSubCat: SubCategory?
     @Published var selectedMainItem : MainItem?
