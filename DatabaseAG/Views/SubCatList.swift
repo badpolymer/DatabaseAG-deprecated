@@ -10,7 +10,7 @@ import RealmSwift
 
 struct SubCatList: View {
     @EnvironmentObject var controller : MainController
-    @State private var selectedSubCat : SubCategory?
+    @State private var selectedSubCategory : SubCategory?
     @State private var editorName: String = ""
     @State private var notModifying: Bool = true
     
@@ -23,11 +23,11 @@ struct SubCatList: View {
                 VStack {
                     
                     if subCategories.count > 0 {
-                        List(subCategories, id:\.self, selection:$selectedSubCat){ cat in
+                        List(subCategories, id:\.self, selection:$selectedSubCategory){ cat in
                             Text(cat.name)
                         }
                         
-                        .onChange(of: selectedSubCat, perform: { newValue in
+                        .onChange(of: selectedSubCategory, perform: { newValue in
                         })
                         .disabled(controller.mainCategoryManagerIsEditing)
                     } else {
@@ -42,7 +42,7 @@ struct SubCatList: View {
                         Text(controller.selectedMainCat?.name ?? "Not selected")
                         Spacer()
                         Button("Edit") {
-                            if selectedSubCat != nil && controller.selectedSubCat != nil {
+                            if selectedSubCategory != nil && controller.selectedSubCat != nil {
                                 controller.mainCategoryManagerIsEditing = true
                                 editorName = controller.selectedSubCat!.name
                                 notModifying = false
