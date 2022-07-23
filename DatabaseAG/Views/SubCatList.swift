@@ -18,57 +18,60 @@ struct SubCatList: View {
         HStack(spacing: 5.0) {
             
             //Left
-            VStack {
-                if let subCategories = controller.selectedMainCat?.subCategories {
+            if let subCategories = controller.subCategories {
+                
+                VStack {
+                    
                     if subCategories.count > 0 {
                         List(subCategories, id:\.self, selection:$selectedSubCat){ cat in
                             Text(cat.name)
                         }
                         
-                        .onChange(of: selectedSubCat, perform: { newValue in
-                            controller.selectedSubCat = controller.convert(newValue)
-                        })
-                        .disabled(controller.subCategoryIsEditing)
+                        //                        .onChange(of: selectedSubCat, perform: { newValue in
+                        //                            controller.selectedSubCat = controller.convert(newValue)
+                        //                        })
+                        .disabled(controller.mainCategoryManagerIsEditing)
                     } else {
                         List(){
-                        Text("No category yet.")
+                            Text("No category yet.")
                         }
                     }
-                }
-                
-                
-                HStack(spacing: 5.0) {
-                    Text(controller.selectedMainCat?.name ?? "Not selected")
-                    Spacer()
-                    Button("Edit") {
-                        if selectedSubCat != nil && controller.selectedSubCat != nil {
-                            controller.subCategoryIsEditing = true
-                            editorName = controller.selectedSubCat!.name
-                            notModifying = false
-                        } else {
-                            controller.categoryEditingError("You didn't select an item.")
-                        }
-                        
-                    }.frame(width: 50)
-                    Button("-") {
-                        if let subCatToDelete = controller.selectedSubCat {
-                        controller.delete(subCatToDelete)
-                        } else {
-                            controller.categoryEditingError("You didn't select an item.")
-                        }
-                    }.frame(width: 25)
-                    Button("+") {
-                        controller.subCategoryIsEditing = true
-                        notModifying = true
-                        controller.testfunc()
-                    }.frame(width: 25)
-                    Spacer()
-                        .frame(width: 5)
+                    
+                    
+                    
+                    HStack(spacing: 5.0) {
+                        Text(controller.selectedMainCat?.name ?? "Not selected")
+                        Spacer()
+                        Button("Edit") {
+                            if selectedSubCat != nil && controller.selectedSubCat != nil {
+                                controller.mainCategoryManagerIsEditing = true
+                                editorName = controller.selectedSubCat!.name
+                                notModifying = false
+                            } else {
+                                controller.errorAlert(with: "You didn't select an item.")
+                            }
+                            
+                        }.frame(width: 50)
+                        Button("-") {
+                            if let subCatToDelete = controller.selectedSubCat {
+                                controller.delete(subCatToDelete)
+                            } else {
+                                controller.errorAlert(with: "You didn't select an item.")
+                            }
+                            print(controller.selectedMainCat?.subCategories ?? "1234567890")
+                        }.frame(width: 25)
+                        Button("+") {
+                            controller.mainCategoryManagerIsEditing = true
+                            notModifying = true
+                            controller.reloadSubCat()
+                        }.frame(width: 25)
+                        Spacer()
+                            .frame(width: 5)
+                    }
                 }
             }
-            
             //right
-            if controller.subCategoryIsEditing {
+            if controller.mainCategoryManagerIsEditing {
                 VStack(alignment: .leading){
                     Text("Main: \(self.controller.selectedMainCat?.name ?? "Error")")
                     HStack {
@@ -78,20 +81,20 @@ struct SubCatList: View {
                     HStack{
                         Spacer()
                         Button {
-                            controller.subCategoryIsEditing = false
+                            controller.mainCategoryManagerIsEditing = false
                         } label: {
                             Text("Cancel")
                         }
                         Button {
                             if editorName.isEmpty {
-                                controller.categoryEditingError("Please enter a name.")
+                                controller.errorAlert(with: "Please enter a name.")
                             } else {
                                 if notModifying {
                                     controller.add(editorName)
                                 } else {
                                     controller.modify(editorName)
                                 }
-                                controller.subCategoryIsEditing = false
+                                controller.mainCategoryManagerIsEditing = false
                                 editorName = ""
                             }
                         } label: {
