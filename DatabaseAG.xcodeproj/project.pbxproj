@@ -12,7 +12,6 @@
 		4835A52E28392243003DC537 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4835A52D28392243003DC537 /* Assets.xcassets */; };
 		4835A53128392243003DC537 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4835A53028392243003DC537 /* Preview Assets.xcassets */; };
 		4835A54B28394E8A003DC537 /* MainCatList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A54A28394E8A003DC537 /* MainCatList.swift */; };
-		4835A54D28394EA3003DC537 /* MainCatRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A54C28394EA3003DC537 /* MainCatRow.swift */; };
 		4835A54F28394EF3003DC537 /* MainCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A54E28394EF3003DC537 /* MainCategory.swift */; };
 		4835A55228395FCE003DC537 /* SubCatList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55128395FCE003DC537 /* SubCatList.swift */; };
 		4835A55428395FE8003DC537 /* SubCatRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4835A55328395FE8003DC537 /* SubCatRow.swift */; };
@@ -34,7 +33,6 @@
 		4835A53028392243003DC537 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4835A53228392243003DC537 /* DatabaseAG.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = DatabaseAG.entitlements; sourceTree = "<group>"; };
 		4835A54A28394E8A003DC537 /* MainCatList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCatList.swift; sourceTree = "<group>"; };
-		4835A54C28394EA3003DC537 /* MainCatRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCatRow.swift; sourceTree = "<group>"; };
 		4835A54E28394EF3003DC537 /* MainCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainCategory.swift; path = DatabaseAG/Model/MainCategory.swift; sourceTree = SOURCE_ROOT; };
 		4835A55128395FCE003DC537 /* SubCatList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCatList.swift; sourceTree = "<group>"; };
 		4835A55328395FE8003DC537 /* SubCatRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubCatRow.swift; sourceTree = "<group>"; };
@@ -106,7 +104,6 @@
 				4835A55D283A579D003DC537 /* ItemList.swift */,
 				4835A55F283A57AC003DC537 /* ItemRow.swift */,
 				48DB3DC2285EE6F600D97941 /* RootManager.swift */,
-				4835A54C28394EA3003DC537 /* MainCatRow.swift */,
 				4835A55328395FE8003DC537 /* SubCatRow.swift */,
 			);
 			path = Views;
@@ -207,7 +204,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4835A54D28394EA3003DC537 /* MainCatRow.swift in Sources */,
 				4835A55C283A4993003DC537 /* MainController.swift in Sources */,
 				4835A560283A57AC003DC537 /* ItemRow.swift in Sources */,
 				4835A52C28392240003DC537 /* ContentView.swift in Sources */,
