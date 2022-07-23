@@ -11,7 +11,9 @@ import RealmSwift
 class MainController : ObservableObject {
     private var myrealm: Realm?
     @Published var filePath : String?
-    @Published var mainCategories : Results<MainCategory>?
+    private var notificationToken: NotificationToken?
+    
+    @Published var mainCategories : [MainCategory]?
     
     @Published var rootManagerIsSelected : Bool = true {
         didSet {
@@ -99,78 +101,68 @@ class MainController : ObservableObject {
         }
     }
     
-    // MARK: - Root Manager (Main Categories)
-    func addMainCat(name n : String, symbol s : String) {
-        dataChangeIsComplete = false
-        let trimedName = n.trimmingCharacters(in: .whitespaces)
-        var trimedSymbol = s.trimmingCharacters(in: .whitespaces)
-        if trimedSymbol == "" { trimedSymbol = "questionmark.square.dashed"}
-        if let currentMainCats = mainCategories {
-            var duplicateNames : Int = 0
-            for category in currentMainCats {
-                if trimedName.compare(category.name, options: .caseInsensitive) == .orderedSame {
-                    duplicateNames += 1
-                }
+    // MARK: - Realm CRUD Method
+    private func add(_ object: Object){
+        self.operationIsComplete = false
+        if let database = myrealm {
+            do {
+                try database.write({
+                    database.add(object)
+                    self.operationIsComplete = true
+                })
+            } catch {
+                realmError(error)
             }
-            
-            if duplicateNames == 0 {
-                let newMainCat = MainCategory(name: trimedName, image: trimedSymbol)
-                
-                    do {
-                        try MainController.myrealm?.write{
-                            MainController.myrealm?.add(newMainCat)
-                            self.dataChangeIsComplete = true
-                            
-                        }
-                        
-                    } catch {
-                        self.realmError(error)
-                    }
-                
-            } else {
-                categoryEditingError("\(trimedName) already exists.")
-            }
-        }
-        
-        
-    }
-    
-    func updateMainCat(_ m: MainCategory, name n: String, symbol s:String) {
-        dataChangeIsComplete = false
-        if realmIsLoaded() {
-            
-                try! MainController.myrealm?.write{
-                    m.name = n
-                    m.image = s
-                }
-            
-            dataChangeIsComplete = true
-        }
-    }
-    
-    
-    func deleteMainCat(_ itemToDelete: MainCategory){
-        dataChangeIsComplete = false
-        if realmIsLoaded() && mainCategories != nil {
-            
-            let subItemsNumber = itemToDelete.subCategories.count
-            if subItemsNumber == 0 {
-                deleteWithAlert(itemToDelete)
-            } else {
-                self.categoryEditingError("There is still items under this category. You cannot delete it.")
-            }
-              
         } else {
-            self.categoryEditingError("Datebase is not loaded or there is no item in root.")
+            errorAlert(with: "Database is not loaded.(Object Creation)")
         }
     }
     
+    private func deleteFromDatabase(_ object: Object) {
+        self.operationIsComplete = false
+        if let database = myrealm {
+            do {
+                try database.write({
+                    database.delete(object)
+                    self.operationIsComplete = true
+                })
+            } catch {
+                realmError(error)
+            }
+        } else {
+            errorAlert(with: "Database is not loaded.(Object Deletion)")
+        }
+    }
     
+    func delete(_ object: Object) {
+        switch object {
+        case is MainCategory:
+            let mainCategory = object as! MainCategory
+            let subCategoryNumber = mainCategory.subCategories.count
+            if subCategoryNumber > 0 {
+                errorAlert(with: "There is one or more subcategory in this Category. You cannot remove it.")
+            } else {
+                deleteWithAlert(mainCategory)
+            }
+            
+        case is SubCategory:
+            let subCategory = object as! SubCategory
+            let itemNumber = subCategory.items.count
+            if itemNumber > 0 {
+                errorAlert(with: "There is one or more item in this Category. You cannot remove it.")
+            } else {
+                deleteWithAlert(subCategory)
+            }
+            
+        default:
+            print("Default")
+        }
+    }
     
-    func deleteWithAlert(_ itemToDelete: Object) {
+    private func deleteWithAlert(_ itemToDelete: Object) {
         let alert = NSAlert()
-        alert.messageText = "Deletion"
-        alert.informativeText = "Note: There is no item under this category. Make sure to remove it?"
+        alert.messageText = "Warning"
+        alert.informativeText = "Are you sure to remove it?"
         alert.addButton(withTitle: "Cancel")
         alert.addButton(withTitle: "Yes")
         alert.alertStyle = .warning
@@ -179,38 +171,83 @@ class MainController : ObservableObject {
         case NSApplication.ModalResponse.alertFirstButtonReturn:
             print("First (and usually default) button")
         case NSApplication.ModalResponse.alertSecondButtonReturn:
-            DispatchQueue.main.async {
-                do {
-                    try MainController.myrealm?.write{
-                        MainController.myrealm?.delete(itemToDelete)
-                    }
-                } catch {
-                    self.realmError(error)
-                }
-            }
+            deleteFromDatabase(itemToDelete)
         default:
             print("There is no provision for further buttons")
         }
     }
-     
-// MARK: - Content View Control
-    func categoryEditingError(_ text :String){
+    
+    // MARK: - Root Manager (Main Categories)
+    func updateOrAddMainCat(_ mainCat: MainCategory?, newName n: String, newSymbol s : String) {
+        operationIsComplete = false
+        if let database = myrealm {
+            let trimedName = n.trimmingCharacters(in: .whitespaces)
+            var trimedSymbol = s.trimmingCharacters(in: .whitespaces)
+            if trimedSymbol == "" { trimedSymbol = "questionmark.square.dashed"}
+            if trimedName.count != 0 {
+                if let editingCategory = mainCat {
+                    // Editing existing Category
+                    if duplicationNumber(trimedName) > 1 {
+                        errorAlert(with: "\(trimedName) already exists. Code: 1")
+                    } else if duplicationNumber(trimedName) == 1 {
+                        let duplicate = database.objects(MainCategory.self).where({$0.name == trimedName}).first?.id
+                        if editingCategory.id != duplicate {
+                            print(editingCategory)
+                            print(duplicate as Any)
+                            errorAlert(with: "\(trimedName) already exists. Code: 2")
+                        } else {
+                            //Not duplicated
+                            updateMainCat(editingCategory, trimedName, trimedSymbol)
+                        }
+                    } else {
+                        //Not duplicated
+                        updateMainCat(editingCategory, trimedName, trimedSymbol)
+                    }
+                } else {
+                    // Add New Category
+                    if duplicationNumber(trimedName) > 0 {
+                        errorAlert(with: "\(trimedName) already exists. Code: 3")
+                    } else {
+                        let newCategory = MainCategory(name: trimedName, image: trimedSymbol)
+                        add(newCategory)
+                    }
+                }
+            } else {
+                errorAlert(with: "The name of category cannot be empty. Code:1")
+            }
+        } else {
+            errorAlert(with: "Database is not loaded.(Root Manager)")
+        }
+    }
+    
+    private func duplicationNumber(_ name: String) -> Int {
+        if let existingCategories = myrealm?.objects(MainCategory.self).where({$0.name == name}) {
+            return existingCategories.count
+        } else {
+            return 0
+        }
+    }
+    
+    private func updateMainCat(_ m: MainCategory, _ n: String, _ s: String ) {
+        do {
+            try myrealm?.write{
+                m.name = n
+                m.image = s
+            }
+            operationIsComplete = true
+        } catch {
+            realmError(error)
+        }
+    }
+    
+    // MARK: - Content View Control
+    func errorAlert(with text :String){
         let alert = NSAlert()
         alert.messageText = "Operation Error"
         alert.informativeText = text
         alert.addButton(withTitle: "OK")
         alert.alertStyle = .warning
         alert.runModal()
-    }
-    
-    func convert(_ id:UUID?) -> MainCategory? {
-        if let id = id, let mainCategories = mainCategories {
-            let result = mainCategories.where{$0.id == id}
-            return result.first
-        } else {
-            return nil
-        }
-            
     }
     
     func convert(_ id:UUID?) -> SubCategory? {
@@ -255,17 +292,20 @@ class MainController : ObservableObject {
             if itemNumber == 0 {
                 deleteWithAlert(subCategory)
             } else {
-                categoryEditingError("There is \(itemNumber) item(s) under this category. You can not delete it.")
+                errorAlert(with: "There is \(itemNumber) item(s) under this category. You can not delete it.")
             }
         } else {
-            categoryEditingError("Please select an item to delete.")
+            errorAlert(with: "Please select an item to delete.")
         }
     }
     
     func delete(subCate: SubCategory) {
         if let selectedSubCat = selectedSubCat {
             let itemNumber = selectedSubCat.items.count
+            print("TTTTTTTTTT")
             if itemNumber == 0 {
+                print ("EEEEEEEEE")
+                guard let index =  selectedMainCat?.subCategories.firstIndex(of: selectedSubCat) else { print("SSSSSS"); return }
                 do {
                     try myrealm?.write({
                         print("Here1")
@@ -275,10 +315,10 @@ class MainController : ObservableObject {
                     
                 }
             } else {
-                categoryEditingError("There is \(itemNumber) item(s) under this category. You can not delete it.")
+                errorAlert(with: "There is \(itemNumber) item(s) under this category. You can not delete it.")
             }
         } else {
-            categoryEditingError("Please select an item to delete.")
+            errorAlert(with: "Please select an item to delete.")
         }
     }
     
