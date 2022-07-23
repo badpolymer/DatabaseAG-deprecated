@@ -8,7 +8,7 @@
 import Foundation
 import RealmSwift
 
-class MainCategory :Object,ObjectKeyIdentifiable,Identifiable{
+class MainCategory :Object,Identifiable{
     @Persisted var id = UUID()
     @Persisted var name: String = "Not Delfined"
     @Persisted var image: String = "questionmark.square.dashed"
