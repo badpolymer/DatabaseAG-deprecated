@@ -28,7 +28,7 @@ struct MainCatList: View {
                 .onChange(of: selected) { newValue in
                     mainController.reloadSubCategories(under: newValue)
                 }
-                .disabled(mainController.subCategoryIsEditing)
+                .disabled(mainController.mainCategoryManagerIsEditing)
             }
         }
     }
