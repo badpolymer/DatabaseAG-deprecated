@@ -27,6 +27,7 @@ class MainController : ObservableObject {
     private var mainCategoriesChangeListener: NotificationToken?
     
     //SubCatlist
+    @Published var subCategories : [SubCategory]?
     @Published var selectedMainCat: MainCategory?
     @Published var mainCategoryManagerIsEditing = false
     @Published var shownSubCategories : Results<SubCategory>?
@@ -263,6 +264,16 @@ class MainController : ObservableObject {
             operationIsComplete = true
         } catch {
             realmError(error)
+        }
+    }
+    
+    // MARK: - Subcategory List(Main Category Manager)
+    func reloadSubCategories(under mainCategory: MainCategory?) {
+        if let category = mainCategory, let datebase = myrealm {
+            let subcategories = Array(datebase.objects(SubCategory.self).where{$0.mainCategory == category})
+            self.subCategories = subcategories
+        } else {
+            subCategories = nil
         }
     }
     
