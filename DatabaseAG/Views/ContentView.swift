@@ -31,7 +31,6 @@ struct ContentView: View {
                 Text(mainController.filePath ?? "Not Loaded")
                 Spacer()
                 Button {
-                    mainController.selectedMainCat = nil
                     mainController.rootManagerIsSelected = true
                     print("Root Manager")
                 } label: {
@@ -81,7 +80,7 @@ struct ContentView: View {
                 
                 //Item List
                 if !mainController.rootManagerIsSelected && !mainController.mainCategoryManagerIsEditing {
-                    Text("Item List")
+                    ItemList()
                 }
                 //Editers
                 if mainController.rootManagerIsSelected {
