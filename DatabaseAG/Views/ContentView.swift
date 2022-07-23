@@ -71,7 +71,7 @@ struct ContentView: View {
                 }
                 
                 //Secondary List
-                if !mainController.rootManagerIsSelected && mainController.selectedMainCat != nil {
+                if !mainController.rootManagerIsSelected{
                     VStack {
                         SubCatList()
                             .frame(width: (mainController.subCategoryIsEditing ? 500:250))
