@@ -44,7 +44,6 @@
 		4835A55F283A57AC003DC537 /* ItemRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemRow.swift; sourceTree = "<group>"; };
 		48A752412840AAEA00E7AC84 /* MainItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainItem.swift; sourceTree = "<group>"; };
 		48DB3DC2285EE6F600D97941 /* RootManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootManager.swift; sourceTree = "<group>"; };
-		48F28E17286DFF7C00C63265 /* MainCategoryManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCategoryManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +106,6 @@
 				4835A55D283A579D003DC537 /* ItemList.swift */,
 				4835A55F283A57AC003DC537 /* ItemRow.swift */,
 				48DB3DC2285EE6F600D97941 /* RootManager.swift */,
-				48F28E17286DFF7C00C63265 /* MainCategoryManager.swift */,
 				4835A54C28394EA3003DC537 /* MainCatRow.swift */,
 				4835A55328395FE8003DC537 /* SubCatRow.swift */,
 			);
@@ -211,7 +209,6 @@
 			files = (
 				4835A54D28394EA3003DC537 /* MainCatRow.swift in Sources */,
 				4835A55C283A4993003DC537 /* MainController.swift in Sources */,
-				48F28E18286DFF7C00C63265 /* MainCategoryManager.swift in Sources */,
 				4835A560283A57AC003DC537 /* ItemRow.swift in Sources */,
 				4835A52C28392240003DC537 /* ContentView.swift in Sources */,
 				48A752422840AAEA00E7AC84 /* MainItem.swift in Sources */,
