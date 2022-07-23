@@ -31,7 +31,20 @@ class MainController : ObservableObject {
     @Published var selectedSubCat: SubCategory?
     @Published var selectedMainItem : MainItem?
     
-    @Published var dataChangeIsComplete : Bool = false
+    @Published var operationIsComplete : Bool = false
+    
+    func reloadMainCat() {
+        mainCategories = Array(myrealm!.objects(MainCategory.self))
+    }
+    
+    func reloadSubCat() {
+        if let selectedMainCat = selectedMainCat {
+            shownSubCategories = myrealm?.objects(SubCategory.self)
+            shownSubCategories = shownSubCategories!.where{$0.mainCategory == selectedMainCat}
+            print (shownSubCategories?.description ?? "NNNNNNNNNNNNNNNNNNNN")
+            
+        }
+    }
     
     // MARK: - Realm DataBase
     func loadRealm() {
@@ -52,9 +65,12 @@ class MainController : ObservableObject {
                 config.fileURL!.appendPathExtension("realm")
 
                 do{
-                    MainController.myrealm = try Realm(configuration: config)
-                    filePath = MainController.myrealm!.configuration.fileURL?.absoluteString
-                    mainCategories = MainController.myrealm!.objects(MainCategory.self)
+                    myrealm = try Realm(configuration: config)
+                    filePath = myrealm!.configuration.fileURL?.absoluteString
+                    mainCategories = Array(myrealm!.objects(MainCategory.self))
+                    notificationToken = myrealm?.observe({ notification, realm in
+                        self.reloadMainCat()
+                    })
                 } catch {
                     realmError(error)
                 }
@@ -76,7 +92,7 @@ class MainController : ObservableObject {
     
     
     func realmIsLoaded() -> Bool {
-        if MainController.myrealm == nil {
+        if myrealm == nil {
             return false
         } else {
             return true
@@ -204,13 +220,13 @@ class MainController : ObservableObject {
         } else {
             return nil
         }
-            
+        
     }
     
     func add(_ subCategory: String) {
         if let mainCategory = selectedMainCat {
             do {
-                try MainController.myrealm?.write({
+                try myrealm?.write({
                     let newCategory = SubCategory()
                     newCategory.name = subCategory
                     mainCategory.subCategories.append(newCategory)
@@ -224,7 +240,7 @@ class MainController : ObservableObject {
     func modify(_ nameOfsubCategory: String) {
         if let selectedSubCat = selectedSubCat {
             do {
-                try MainController.myrealm?.write({
+                try myrealm?.write({
                     selectedSubCat.name = nameOfsubCategory
                 })
             } catch {
@@ -251,8 +267,9 @@ class MainController : ObservableObject {
             let itemNumber = selectedSubCat.items.count
             if itemNumber == 0 {
                 do {
-                    try MainController.myrealm?.write({
-                        selectedMainCat?.subCategories.removeFirst()
+                    try myrealm?.write({
+                        print("Here1")
+                        selectedMainCat?.subCategories.remove(at: index)
                     })
                 } catch {
                     
