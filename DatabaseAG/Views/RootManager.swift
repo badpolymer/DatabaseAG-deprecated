@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import RealmSwift
 
 struct RootManager: View {
     @EnvironmentObject var mainController : MainController
