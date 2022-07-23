@@ -9,7 +9,7 @@ import SwiftUI
 import RealmSwift
 
 class MainController : ObservableObject {
-    static var myrealm: Realm?
+    private var myrealm: Realm?
     @Published var filePath : String?
     @Published var mainCategories : Results<MainCategory>?
     
