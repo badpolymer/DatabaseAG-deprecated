@@ -9,11 +9,11 @@ import SwiftUI
 
 struct MainCatList: View {
     @EnvironmentObject var mainController : MainController
-    @State private var selected : UUID?
+    @State private var selected : MainCategory?
     var body: some View {
         VStack{
             if let categories = mainController.mainCategories {
-                List(categories, selection: $selected) {cat in
+                List(categories,id: \.self, selection: $selected) {cat in
                     
                     HStack{
                         Image(systemName: cat.image)
