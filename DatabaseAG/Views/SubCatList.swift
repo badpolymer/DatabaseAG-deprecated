@@ -27,9 +27,8 @@ struct SubCatList: View {
                             Text(cat.name)
                         }
                         
-                        //                        .onChange(of: selectedSubCat, perform: { newValue in
-                        //                            controller.selectedSubCat = controller.convert(newValue)
-                        //                        })
+                        .onChange(of: selectedSubCat, perform: { newValue in
+                        })
                         .disabled(controller.mainCategoryManagerIsEditing)
                     } else {
                         List(){
