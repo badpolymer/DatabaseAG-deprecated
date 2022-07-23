@@ -11,19 +11,20 @@ import RealmSwift
 class MainController : ObservableObject {
     private var myrealm: Realm?
     @Published var filePath : String?
-    private var notificationToken: NotificationToken?
-    
     @Published var mainCategories : [MainCategory]?
-    
     @Published var rootManagerIsSelected : Bool = true {
         didSet {
             if rootManagerIsSelected {
+                startObservingMainCategoriesChange()
                 self.selectedMainCat = nil
                 self.selectedMainItem = nil
+            } else {
+                stopObservingMainCategoriesChange()
             }
         }
     }
-    
+    //Change Listeners
+    private var mainCategoriesChangeListener: NotificationToken?
     
     //SubCatlist
     @Published var selectedMainCat: MainCategory?
@@ -35,9 +36,7 @@ class MainController : ObservableObject {
     
     @Published var operationIsComplete : Bool = false
     
-    func reloadMainCat() {
-        mainCategories = Array(myrealm!.objects(MainCategory.self))
-    }
+    
     
     func reloadSubCat() {
         if let selectedMainCat = selectedMainCat {
@@ -47,7 +46,36 @@ class MainController : ObservableObject {
             
         }
     }
+    // MARK: - Collection Change Listeners
+    func startObservingMainCategoriesChange() {
+        if let database = myrealm {
+            let results = database.objects(MainCategory.self)
+            
+            mainCategoriesChangeListener = results.observe { [weak self] (changes: RealmCollectionChange) in
+                switch changes {
+                case .initial:
+                    // Results are now populated and can be accessed without blocking the UI
+                    print("ObservingMainCategoriesChange")
+                case .update(_, let deletions, let insertions, let modifications):
+                    // Query results have changed, so apply them to the UITableView
+                    print(" Delete at index: ",deletions,"\n","Insert at index: ", insertions, "\n","modify at index: ", modifications)
+                    // Always apply updates in the following order: deletions, insertions, then modifications.
+                    // Handling insertions before deletions may result in unexpected behavior.
+                    self?.reloadMainCategories()
+                    
+                    
+                case .error(let error):
+                    // An error occurred while opening the Realm file on the background worker thread
+                    fatalError("\(error)")
+                }
+            }
+        }
+    }
     
+    func stopObservingMainCategoriesChange() {
+        mainCategoriesChangeListener?.invalidate()
+        print("stopObservingMainCategoriesChange")
+    }
     // MARK: - Realm DataBase Loading
     func loadRealm() {
         var config = Realm.Configuration.defaultConfiguration
@@ -70,9 +98,7 @@ class MainController : ObservableObject {
                     myrealm = try Realm(configuration: config)
                     filePath = myrealm!.configuration.fileURL?.absoluteString
                     mainCategories = Array(myrealm!.objects(MainCategory.self))
-                    notificationToken = myrealm?.observe({ notification, realm in
-                        self.reloadMainCat()
-                    })
+                    self.startObservingMainCategoriesChange()
                 } catch {
                     realmError(error)
                 }
@@ -248,6 +274,10 @@ class MainController : ObservableObject {
         alert.addButton(withTitle: "OK")
         alert.alertStyle = .warning
         alert.runModal()
+    }
+    
+    private func reloadMainCategories() {
+        mainCategories = Array(myrealm!.objects(MainCategory.self))
     }
     
     func convert(_ id:UUID?) -> SubCategory? {
