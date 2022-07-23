@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import RealmSwift
 
 struct SubCatList: View {
     @EnvironmentObject var controller : MainController
