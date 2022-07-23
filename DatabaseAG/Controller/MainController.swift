@@ -48,7 +48,7 @@ class MainController : ObservableObject {
         }
     }
     
-    // MARK: - Realm DataBase
+    // MARK: - Realm DataBase Loading
     func loadRealm() {
         var config = Realm.Configuration.defaultConfiguration
         config.schemaVersion = 2
