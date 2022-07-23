@@ -10,7 +10,7 @@ import RealmSwift
 
 struct SubCatList: View {
     @EnvironmentObject var controller : MainController
-    @State private var selectedSubCat : UUID?
+    @State private var selectedSubCat : SubCategory?
     @State private var editorName: String = ""
     @State private var notModifying: Bool = true
     
@@ -21,8 +21,8 @@ struct SubCatList: View {
             VStack {
                 if let subCategories = controller.selectedMainCat?.subCategories {
                     if subCategories.count > 0 {
-                        List(subCategories,selection:$selectedSubCat){
-                            Text($0.name)
+                        List(subCategories, id:\.self, selection:$selectedSubCat){ cat in
+                            Text(cat.name)
                         }
                         
                         .onChange(of: selectedSubCat, perform: { newValue in
