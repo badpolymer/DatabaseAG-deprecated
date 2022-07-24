@@ -11,12 +11,11 @@ struct SubCatList: View {
     @EnvironmentObject var controller : MainController
     @State private var selectedSubCategory : SubCategory?
     @State private var editorName: String = ""
-    @State private var notModifying: Bool = true
     
     var body: some View {
         HStack(spacing: 5.0) {
             
-            //Left
+// MARK: - Subcategories List and buttons
             if let subCategories = controller.subCategories {
                 
                 VStack {
@@ -38,66 +37,61 @@ struct SubCatList: View {
                     
                     
                     HStack(spacing: 5.0) {
-                        Text(controller.selectedMainCat?.name ?? "Not selected")
+                        Text(subCategories.first?.mainCategory.first?.name ?? "Not selected")
                         Spacer()
                         Button("Edit") {
-                            if selectedSubCategory != nil && controller.selectedSubCat != nil {
-                                controller.mainCategoryManagerIsEditing = true
-                                editorName = controller.selectedSubCat!.name
-                                notModifying = false
-                            } else {
-                                controller.errorAlert(with: "You didn't select an item.")
-                            }
                             
-                        }.frame(width: 50)
-                        Button("-") {
-                            if let subCatToDelete = controller.selectedSubCat {
-                                controller.delete(subCatToDelete)
-                            } else {
-                                controller.errorAlert(with: "You didn't select an item.")
-                            }
-                            print(controller.selectedMainCat?.subCategories ?? "1234567890")
-                        }.frame(width: 25)
-                        Button("+") {
                             controller.mainCategoryManagerIsEditing = true
-                            notModifying = true
-                            controller.reloadSubCat()
+                            controller.operationIsComplete = false
+                            editorName = selectedSubCategory!.name
+                          
+                            
+                        }
+                        .frame(width: 50)
+                        .disabled(selectedSubCategory == nil)
+                        Button("-") {
+                            
+                        }
+                        .frame(width: 25)
+                        .disabled(selectedSubCategory == nil)
+                        Button("+") {
+                            editorName = ""
+                            controller.mainCategoryManagerIsEditing = true
+                            controller.operationIsComplete = false
+                            selectedSubCategory = nil
+                            
                         }.frame(width: 25)
                         Spacer()
                             .frame(width: 5)
                     }
                 }
             }
-            //right
+// MARK: - Main Category Manager
             if controller.mainCategoryManagerIsEditing {
                 VStack(alignment: .leading){
-                    Text("Main: \(self.controller.selectedMainCat?.name ?? "Error")")
+                    Text("Main Category: \(self.controller.subCategories?.first?.mainCategory.first?.name ?? "Error")")
                     HStack {
                         Text("Name:")
                         TextField("Enter the name.", text: $editorName)
+                            .disabled(controller.disableMainCategoryManagerEditing)
                     }
                     HStack{
                         Spacer()
                         Button {
                             controller.mainCategoryManagerIsEditing = false
+                            editorName = ""
                         } label: {
                             Text("Cancel")
                         }
+                        .disabled(controller.disableMainCategoryManagerEditing)
                         Button {
-                            if editorName.isEmpty {
-                                controller.errorAlert(with: "Please enter a name.")
-                            } else {
-                                if notModifying {
-                                    controller.add(editorName)
-                                } else {
-                                    controller.modify(editorName)
-                                }
-                                controller.mainCategoryManagerIsEditing = false
-                                editorName = ""
-                            }
+                            controller.updateOrAdd(selectedSubCategory, with: editorName)
+                            editorName = ""
+                            selectedSubCategory = nil
                         } label: {
                             Text("Save")
                         }
+                        .disabled(controller.disableMainCategoryManagerEditing)
                         
                         
                         
@@ -112,13 +106,4 @@ struct SubCatList: View {
     }//End of body
 }
 
-struct SubCatList_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        
-        SubCatList()
-            .environmentObject(MainController())
-            .preferredColorScheme(.light)
-        
-    }
-}
+
