@@ -67,8 +67,8 @@ struct RootManager: View {
                         //Action for -
                         mainController.operationIsComplete = false
                         if let categoryToDelete = selectedMainCat {
-                            mainController.delete(categoryToDelete)
                             selectedMainCat = nil
+                            mainController.delete(categoryToDelete)
                             mainCatName = ""
                             mainCatSymbol = ""
                             title = "New Main Category"

@@ -19,7 +19,7 @@ class MainController : ObservableObject {
                 self.selectedMainCategory = nil
                 self.selectedMainItem = nil
             } else {
-                stopObservingMainCategoriesChange()
+//                stopObservingMainCategoriesChange()
             }
         }
     }
@@ -35,7 +35,7 @@ class MainController : ObservableObject {
     @Published var subCategories : [SubCategory]?
     @Published var mainCategoryManagerIsEditing = false
     @Published var disableMainCategoryManagerEditing = false
-    @Published var shownSubCategories : Results<SubCategory>?
+
     
     @Published var selectedSubCat: SubCategory?
     @Published var selectedMainItem : MainItem?
@@ -44,14 +44,7 @@ class MainController : ObservableObject {
     
     
     
-    func reloadSubCat() {
-        if let selectedMainCat = selectedMainCategory {
-            shownSubCategories = myrealm?.objects(SubCategory.self)
-            shownSubCategories = shownSubCategories!.where{$0.mainCategory == selectedMainCat}
-            print (shownSubCategories?.description ?? "NNNNNNNNNNNNNNNNNNNN")
-            
-        }
-    }
+   
     // MARK: - Collection Change Listeners
     func startObservingMainCategoriesChange() {
         if let database = myrealm {
@@ -63,10 +56,7 @@ class MainController : ObservableObject {
                     // Results are now populated and can be accessed without blocking the UI
                     print("ObservingMainCategoriesChange")
                 case .update(_, let deletions, let insertions, let modifications):
-                    // Query results have changed, so apply them to the UITableView
                     print(" Delete at index: ",deletions,"\n","Insert at index: ", insertions, "\n","modify at index: ", modifications)
-                    // Always apply updates in the following order: deletions, insertions, then modifications.
-                    // Handling insertions before deletions may result in unexpected behavior.
                     self?.reloadMainCategories()
                     
                     
@@ -104,7 +94,7 @@ class MainController : ObservableObject {
                     myrealm = try Realm(configuration: config)
                     filePath = myrealm!.configuration.fileURL?.absoluteString
                     mainCategories = Array(myrealm!.objects(MainCategory.self))
-                    self.startObservingMainCategoriesChange()
+//                    self.startObservingMainCategoriesChange()
                 } catch {
                     realmError(error)
                 }
@@ -191,6 +181,7 @@ class MainController : ObservableObject {
                 errorAlert(with: "There is one or more subcategory in this Category. You cannot remove it.")
             } else {
                 deleteWithAlert(mainCategory)
+                reloadMainCategories()
             }
             
         case is SubCategory:
@@ -200,6 +191,7 @@ class MainController : ObservableObject {
                 errorAlert(with: "There is one or more item in this Category. You cannot remove it.")
             } else {
                 deleteWithAlert(subCategory)
+                reloadSubCategories(under: selectedMainCategory)
             }
             
         default:
@@ -256,6 +248,7 @@ class MainController : ObservableObject {
                     } else {
                         let newCategory = MainCategory(name: trimedName, image: trimedSymbol)
                         add(newCategory)
+                        reloadMainCategories()
                     }
                 }
             } else {
@@ -281,6 +274,7 @@ class MainController : ObservableObject {
                 m.image = s
             }
             operationIsComplete = true
+            reloadMainCategories()
         } catch {
             realmError(error)
         }

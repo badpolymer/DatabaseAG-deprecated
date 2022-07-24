@@ -50,6 +50,11 @@ struct SubCatList: View {
                         .frame(width: 50)
                         .disabled(selectedSubCategory == nil)
                         Button("-") {
+                            if let selectedSubCategory = selectedSubCategory {
+                                controller.delete(selectedSubCategory)
+                            }else {
+                                controller.errorAlert(with: "You didn't select an items. Code: 020")
+                            }
                             
                         }
                         .frame(width: 25)
