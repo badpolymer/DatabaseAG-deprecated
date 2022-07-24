@@ -5,7 +5,7 @@
 //  Created by Frederick Tang on 5/22/22.
 //
 
-import SwiftUI
+import AppKit
 import RealmSwift
 
 class MainController : ObservableObject {
