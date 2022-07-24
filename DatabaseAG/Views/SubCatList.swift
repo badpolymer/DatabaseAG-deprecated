@@ -15,7 +15,7 @@ struct SubCatList: View {
     var body: some View {
         HStack(spacing: 5.0) {
             
-// MARK: - Subcategories List and buttons
+// MARK: - Subcategories List and buttons Base Error Code: 100
             if let subCategories = controller.subCategories {
                 
                 VStack {
@@ -26,6 +26,7 @@ struct SubCatList: View {
                         }
                         
                         .onChange(of: selectedSubCategory, perform: { newValue in
+                            controller.selectedSubcategory = newValue
                         })
                         .disabled(controller.mainCategoryManagerIsEditing)
                     } else {
@@ -53,7 +54,7 @@ struct SubCatList: View {
                             if let selectedSubCategory = selectedSubCategory {
                                 controller.delete(selectedSubCategory)
                             }else {
-                                controller.errorAlert(with: "You didn't select an items. Code: 020")
+                                controller.errorAlert(with: "You didn't select an items. Code: 105")
                             }
                             
                         }
