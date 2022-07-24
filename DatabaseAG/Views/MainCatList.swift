@@ -26,7 +26,7 @@ struct MainCatList: View {
                 }
                 .listStyle(.plain)
                 .onChange(of: selected) { newValue in
-                    mainController.reloadSubCategories(under: newValue)
+                    mainController.selectedMainCategory = newValue
                 }
                 .disabled(mainController.mainCategoryManagerIsEditing)
             }
