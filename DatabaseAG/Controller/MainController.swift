@@ -16,7 +16,7 @@ class MainController : ObservableObject {
         didSet {
             if rootManagerIsSelected {
                 startObservingMainCategoriesChange()
-                self.selectedMainCat = nil
+                self.selectedMainCategory = nil
                 self.selectedMainItem = nil
             } else {
                 stopObservingMainCategoriesChange()
@@ -27,9 +27,14 @@ class MainController : ObservableObject {
     private var mainCategoriesChangeListener: NotificationToken?
     
     //SubCatlist
+    var selectedMainCategory: MainCategory? {
+        didSet{
+            reloadSubCategories(under: selectedMainCategory)
+        }
+    }
     @Published var subCategories : [SubCategory]?
-    @Published var selectedMainCat: MainCategory?
     @Published var mainCategoryManagerIsEditing = false
+    @Published var disableMainCategoryManagerEditing = false
     @Published var shownSubCategories : Results<SubCategory>?
     
     @Published var selectedSubCat: SubCategory?
@@ -40,7 +45,7 @@ class MainController : ObservableObject {
     
     
     func reloadSubCat() {
-        if let selectedMainCat = selectedMainCat {
+        if let selectedMainCat = selectedMainCategory {
             shownSubCategories = myrealm?.objects(SubCategory.self)
             shownSubCategories = shownSubCategories!.where{$0.mainCategory == selectedMainCat}
             print (shownSubCategories?.description ?? "NNNNNNNNNNNNNNNNNNNN")
@@ -141,7 +146,23 @@ class MainController : ObservableObject {
                 realmError(error)
             }
         } else {
-            errorAlert(with: "Database is not loaded.(Object Creation)")
+            errorAlert(with: "Database is not loaded. Code: 001")
+        }
+    }
+    
+    private func add<T:Object, M: Object>(_ object: M, to superObject: List<T>) {
+        self.operationIsComplete = false
+        if let database = myrealm {
+            do {
+                try database.write({
+                    superObject.append(object as! T)
+                    self.operationIsComplete = true
+                })
+            } catch {
+                realmError(error)
+            }
+        } else {
+            errorAlert(with: "Database is not loaded. Code: 003")
         }
     }
     
@@ -157,7 +178,7 @@ class MainController : ObservableObject {
                 realmError(error)
             }
         } else {
-            errorAlert(with: "Database is not loaded.(Object Deletion)")
+            errorAlert(with: "Database is not loaded. Code: 002")
         }
     }
     
@@ -219,16 +240,14 @@ class MainController : ObservableObject {
                     } else if countDuplicationInMainCategories(by: trimedName) == 1 {
                         let duplicate = database.objects(MainCategory.self).where({$0.name == trimedName}).first?.id
                         if editingCategory.id != duplicate {
-                            print(editingCategory)
-                            print(duplicate as Any)
                             errorAlert(with: "\(trimedName) already exists. Code: 2")
                         } else {
                             //Not duplicated
-                            updateMainCat(editingCategory, trimedName, trimedSymbol)
+                            update(editingCategory, trimedName, trimedSymbol)
                         }
                     } else {
                         //Not duplicated
-                        updateMainCat(editingCategory, trimedName, trimedSymbol)
+                        update(editingCategory, trimedName, trimedSymbol)
                     }
                 } else {
                     // Add New Category
@@ -255,7 +274,7 @@ class MainController : ObservableObject {
         }
     }
     
-    private func updateMainCat(_ m: MainCategory, _ n: String, _ s: String ) {
+    private func update(_ m: MainCategory, _ n: String, _ s: String ) {
         do {
             try myrealm?.write{
                 m.name = n
@@ -275,6 +294,90 @@ class MainController : ObservableObject {
         } else {
             subCategories = nil
         }
+    }
+    
+    func updateOrAdd(_ subcategory: SubCategory?, with name: String) {
+        self.operationIsComplete = false
+        self.disableMainCategoryManagerEditing = true
+        let trimedName = name.trimmingCharacters(in: .whitespaces)
+        if trimedName.isEmpty {
+            mainCategoryManagerAlert(with: "The name of category cannot be empty. Code: 100")
+            return
+        }
+        if let selectedMainCategory = self.selectedMainCategory {
+            
+            if let editingSubcategory = subcategory {
+                //Edit an existing Subgategory
+                let duplication = countDuplicationInSubcategories(by: name, under: selectedMainCategory)
+                switch duplication {
+                case 0:
+                    update(editingSubcategory, with: trimedName)
+                    closeMainCategoryManager()
+                case 1:
+                    if let database = myrealm{
+                        let suspectedCategory = database.objects(SubCategory.self).where{$0.name == trimedName && $0.mainCategory == selectedMainCategory}
+                        if editingSubcategory.id == suspectedCategory.first?.id {
+                            //not duplicated
+                            update(editingSubcategory, with: trimedName)
+                            closeMainCategoryManager()
+                        } else {
+                            mainCategoryManagerAlert(with: "\(name) already exists. Code: 102")
+                        }
+                    } else {
+                        mainCategoryManagerAlert(with: "Database is not loaded. Code: 103")
+                    }
+                default:
+                    mainCategoryManagerAlert(with: "\(name) already exists. Code: 101")
+                }
+                
+                
+            } else {
+                // Add a new Subcategory
+                let duplication = countDuplicationInSubcategories(by: name, under: selectedMainCategory)
+                if duplication == 0 {
+                    let newCategory = SubCategory()
+                    newCategory.name = name
+                    self.add(newCategory, to: selectedMainCategory.subCategories)
+                    closeMainCategoryManager()
+                } else {
+                    mainCategoryManagerAlert(with: "\(name) already exists. Code: 100")
+                }
+            }
+        } else {
+            mainCategoryManagerAlert(with: "You didn't select any category. Code: 104")
+            return
+        }
+    }
+    
+    private func mainCategoryManagerAlert(with alert: String) {
+        errorAlert(with: alert)
+        self.disableMainCategoryManagerEditing = false
+    }
+    
+    private func update(_ subcategory : SubCategory, with newName: String) {
+        do {
+            try myrealm?.write{
+                subcategory.name = newName
+            }
+            operationIsComplete = true
+            
+        } catch {
+            realmError(error)
+        }
+    }
+    
+    private func countDuplicationInSubcategories(by name: String, under mainCategory: MainCategory) -> Int {
+        if let existingCategories = myrealm?.objects(SubCategory.self).where({$0.name == name && $0.mainCategory == mainCategory }) {
+            return existingCategories.count
+        } else {
+            return 0
+        }
+    }
+    
+    private func closeMainCategoryManager() {
+        self.reloadSubCategories(under: self.selectedMainCategory)
+        self.mainCategoryManagerIsEditing = false
+        self.disableMainCategoryManagerEditing = false
     }
     
     // MARK: - Content View Control
