@@ -214,9 +214,9 @@ class MainController : ObservableObject {
             if trimedName.count != 0 {
                 if let editingCategory = mainCat {
                     // Editing existing Category
-                    if duplicationNumber(trimedName) > 1 {
+                    if countDuplicationInMainCategories(by: trimedName) > 1 {
                         errorAlert(with: "\(trimedName) already exists. Code: 1")
-                    } else if duplicationNumber(trimedName) == 1 {
+                    } else if countDuplicationInMainCategories(by: trimedName) == 1 {
                         let duplicate = database.objects(MainCategory.self).where({$0.name == trimedName}).first?.id
                         if editingCategory.id != duplicate {
                             print(editingCategory)
@@ -232,7 +232,7 @@ class MainController : ObservableObject {
                     }
                 } else {
                     // Add New Category
-                    if duplicationNumber(trimedName) > 0 {
+                    if countDuplicationInMainCategories(by: trimedName) > 0 {
                         errorAlert(with: "\(trimedName) already exists. Code: 3")
                     } else {
                         let newCategory = MainCategory(name: trimedName, image: trimedSymbol)
@@ -247,7 +247,7 @@ class MainController : ObservableObject {
         }
     }
     
-    private func duplicationNumber(_ name: String) -> Int {
+    private func countDuplicationInMainCategories(by name: String) -> Int {
         if let existingCategories = myrealm?.objects(MainCategory.self).where({$0.name == name}) {
             return existingCategories.count
         } else {
