@@ -36,8 +36,17 @@ class MainController : ObservableObject {
     @Published var mainCategoryManagerIsEditing = false
     @Published var disableMainCategoryManagerEditing = false
 
+    //Item List
+    @Published var selectedSubcategory: SubCategory?{
+        didSet{
+            reloadItems(under: selectedSubcategory)
+        }
+    }
+    @Published var items: [MainItem]?
     
-    @Published var selectedSubCat: SubCategory?
+    
+    
+    
     @Published var selectedMainItem : MainItem?
     
     @Published var operationIsComplete : Bool = false
@@ -123,7 +132,7 @@ class MainController : ObservableObject {
         }
     }
     
-    // MARK: - Realm CRUD Method
+    // MARK: - Realm CRUD Method Base Error Code: 000
     private func add(_ object: Object){
         self.operationIsComplete = false
         if let database = myrealm {
@@ -178,7 +187,7 @@ class MainController : ObservableObject {
             let mainCategory = object as! MainCategory
             let subCategoryNumber = mainCategory.subCategories.count
             if subCategoryNumber > 0 {
-                errorAlert(with: "There is one or more subcategory in this Category. You cannot remove it.")
+                errorAlert(with: "There is one or more subcategory in this Category. You cannot remove it. Code: 004")
             } else {
                 deleteWithAlert(mainCategory)
                 reloadMainCategories()
@@ -188,7 +197,7 @@ class MainController : ObservableObject {
             let subCategory = object as! SubCategory
             let itemNumber = subCategory.items.count
             if itemNumber > 0 {
-                errorAlert(with: "There is one or more item in this Category. You cannot remove it.")
+                errorAlert(with: "There is one or more item in this Category. You cannot remove it. Code: 005")
             } else {
                 deleteWithAlert(subCategory)
                 reloadSubCategories(under: selectedMainCategory)
@@ -209,7 +218,7 @@ class MainController : ObservableObject {
         let result = alert.runModal()
         switch result {
         case NSApplication.ModalResponse.alertFirstButtonReturn:
-            print("First (and usually default) button")
+            print("You Clicked CANCEL")
         case NSApplication.ModalResponse.alertSecondButtonReturn:
             deleteFromDatabase(itemToDelete)
         default:
@@ -217,7 +226,7 @@ class MainController : ObservableObject {
         }
     }
     
-    // MARK: - Root Manager (Main Categories)
+    // MARK: - Root Manager (Main Categories) Base Error Code: 090
     func updateOrAddMainCat(_ mainCat: MainCategory?, newName n: String, newSymbol s : String) {
         operationIsComplete = false
         if let database = myrealm {
@@ -228,11 +237,11 @@ class MainController : ObservableObject {
                 if let editingCategory = mainCat {
                     // Editing existing Category
                     if countDuplicationInMainCategories(by: trimedName) > 1 {
-                        errorAlert(with: "\(trimedName) already exists. Code: 1")
+                        errorAlert(with: "\(trimedName) already exists. Code: 091")
                     } else if countDuplicationInMainCategories(by: trimedName) == 1 {
                         let duplicate = database.objects(MainCategory.self).where({$0.name == trimedName}).first?.id
                         if editingCategory.id != duplicate {
-                            errorAlert(with: "\(trimedName) already exists. Code: 2")
+                            errorAlert(with: "\(trimedName) already exists. Code: 092")
                         } else {
                             //Not duplicated
                             update(editingCategory, trimedName, trimedSymbol)
@@ -244,7 +253,7 @@ class MainController : ObservableObject {
                 } else {
                     // Add New Category
                     if countDuplicationInMainCategories(by: trimedName) > 0 {
-                        errorAlert(with: "\(trimedName) already exists. Code: 3")
+                        errorAlert(with: "\(trimedName) already exists. Code: 093")
                     } else {
                         let newCategory = MainCategory(name: trimedName, image: trimedSymbol)
                         add(newCategory)
@@ -252,10 +261,10 @@ class MainController : ObservableObject {
                     }
                 }
             } else {
-                errorAlert(with: "The name of category cannot be empty. Code:1")
+                errorAlert(with: "The name of category cannot be empty. Code: 095")
             }
         } else {
-            errorAlert(with: "Database is not loaded.(Root Manager)")
+            errorAlert(with: "Database is not loaded. Code: 096")
         }
     }
     
@@ -280,7 +289,7 @@ class MainController : ObservableObject {
         }
     }
     
-    // MARK: - Subcategory List(Main Category Manager)
+    // MARK: - Subcategory List(Main Category Manager) Base Error Code: 100
     func reloadSubCategories(under mainCategory: MainCategory?) {
         if let category = mainCategory, let datebase = myrealm {
             let subcategories = Array(datebase.objects(SubCategory.self).where{$0.mainCategory == category})
